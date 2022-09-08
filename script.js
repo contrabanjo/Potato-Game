@@ -1,5 +1,4 @@
-console.log("javascript loaded");
-
+//initialization -------------------------------------------------//
 const stats ={
   potatoes: 3,
   destiny: 0,
@@ -136,50 +135,82 @@ const knock_actions = [
   }
 ]
 
-function rolld6(){
-  return Math.floor(Math.random() * (6 - 1) + 1);
-}
+createStatDisplay();
 
-
+//actions -------------------------------------------------//
 function roll(){
   const result = rolld6();
   if (result <= 2) {
-    updateLog("You enter your garden.", "italic")
+    updateLog("You enter your garden.", "italic");
     rollAction("garden");
   } else if (result <= 4) {
-    updateLog("You hear a knock at your door.", "italic")
+    updateLog("You hear a knock at your door.", "italic");
     rollAction("knock");
   } else {
     potatoesToRemoveOrcs +=1;
-    document.getElementById("trade").textContent = "Trade " + potatoesToRemoveOrcs + " potatoes to remove 1 Orc"
-    updateLog("The world is growing darker.", "italic") 
+    document.getElementById("trade").textContent = "Trade " + potatoesToRemoveOrcs + " potatoes to remove 1 Orc";
+    updateLog("The world is growing darker.", "italic"); 
     updateLog("It now requires " + potatoesToRemoveOrcs + " potatoes to stave off orcs.");
   }
 
-  initializeStatDisplay();  
+  updateStatDisplay();
+  checkForEndCondition();  
   return result;
+}
+
+function checkForEndCondition(){
+
+  if (stats.potatoes >= 10){
+      updateLog("You have become a successful potato farmer.");
+      updateLog("THE END");
+     
+  } else if (stats.destiny >=10) {
+      updateLog("You are recruited by a wizard for a magical adventure.");
+      updateLog("THE END");
+      
+  } else if (stats.orcs >= 10){
+      updateLog("You have been eaten by orcs. :(")
+      updateLog("THE END");
+      
+  } else {   
+      return false;
+  }
+
+  document.getElementById('trade').removeEventListener("click", trade);
+  document.getElementById('roll').removeEventListener("click", roll);
+    
+  const actions = document.getElementById("actions");
+  const restart = document.createElement("button");
+  restart.textContent = "New Game";
+  restart.addEventListener("click", (e)=>{location.reload()})
+  actions.appendChild(restart);
+  
+  return true;
 }
 
 function trade(){
   if (stats.potatoes >= potatoesToRemoveOrcs){
     stats.potatoes -= 1 * potatoesToRemoveOrcs;
     stats.orcs -= 1;
-    initializeStatDisplay()
+    updateStatDisplay()
   }
   
 }
-document.getElementById("trade").addEventListener("click", trade);
 
+function rolld6(){
+  return Math.floor(Math.random() * (6 - 1) + 1);
+}
 
 function rollAction(action_type){
   const result = rolld6();
-  console.log(result);
+
   let action;
   if (action_type === "garden"){
     action = garden_actions[result];
   } else {
     action = knock_actions[result];
   }
+
   for (const[key,value] of Object.entries(action.gains)){
     stats[key] += value;
   }
@@ -196,37 +227,33 @@ function rollAction(action_type){
   updateLog(action.result + ": " + action.text);
 }
 
+document.getElementById("trade").addEventListener("click", trade);
 document.getElementById("roll").addEventListener("click", roll);
 
+//views--------------------------------------------------------//
 
-function initializeStatDisplay(){
-  //TODO remove child elements in less stupid way
-  Object.keys(stats).forEach(key=> document.getElementById(key).innerHTML = "");
-
-
-  for (let i=0; i < 10; i++){
-    Object.keys(stats).forEach(key => {
-      const currentStat = document.getElementById(key);
-      const newStatMarker = document.createElement("div");
-      if (stats[key] <= i){
-        newStatMarker.classList.add("empty");
-      } else {
-        newStatMarker.classList.add("filled");
+function updateStatDisplay(){
+  Object.keys(stats).forEach(key => {
+    const currentStat = document.getElementById(key);
+    Array.from(currentStat.children).forEach((child, index) =>{
+      if (index+1 <= stats[key] && !child.classList.contains("filled")){
+        child.classList.add("filled");
+        child.classList.remove("empty")
       }
-      currentStat.appendChild(newStatMarker);
     })
-  }
+  })  
+}
 
-  if (checkForEndCondition()){
-    document.getElementById('trade').removeEventListener("click", trade);
-    document.getElementById('roll').removeEventListener("click", roll);
-    
-    const actions = document.getElementById("actions");
-    const restart = document.createElement("button");
-    restart.textContent = "New Game";
-    restart.addEventListener("click", (e)=>{location.reload()})
-    actions.appendChild(restart);
-  };
+function createStatDisplay(){
+  Object.keys(stats).forEach(key =>{
+    const currentStat = document.getElementById(key);
+    for (let i = 1; i <=10; i++){
+      const newStatBox = document.createElement("div");
+      newStatBox.classList.add("empty");
+      currentStat.append(newStatBox);
+    }
+  })
+  updateStatDisplay();
 }
 
 function updateLog(text, className){
@@ -238,26 +265,4 @@ function updateLog(text, className){
   }
   log.appendChild(newLogEntry);
   log.scrollTo(0, log.scrollHeight);
-}
-
-
-initializeStatDisplay();
-
-function checkForEndCondition(){
-
-  if (stats.potatoes >= 10){
-      updateLog("You have become a successful potato farmer.");
-      updateLog("THE END");
-      return true;
-  } else if (stats.destiny >=10) {
-      updateLog("You are recruited by a wizard for a magical adventure.");
-      updateLog("THE END");
-      return true;
-  } else if (stats.orcs >= 10){
-      updateLog("You have been eaten by orcs. :(")
-      updateLog("THE END");
-      return true;
-  } else {
-      return false;
-  }
 }
