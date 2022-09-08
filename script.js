@@ -1,7 +1,7 @@
 console.log("javascript loaded");
 
 const stats ={
-  potatoes: 0,
+  potatoes: 3,
   destiny: 0,
   orcs: 0
 }
@@ -62,7 +62,7 @@ const garden_actions = [
   },
   {
     result: 6,
-    text: "You burrow into a bumper crop of potatoes Do you cry with joy? Possibly.",
+    text: "You burrow into a bumper crop of potatoes. Do you cry with joy? Possibly.",
     gains: {
       potatoes: 2
     },
@@ -135,6 +135,7 @@ const knock_actions = [
     }
   }
 ]
+
 function rolld6(){
   return Math.floor(Math.random() * (6 - 1) + 1);
 }
@@ -143,15 +144,16 @@ function rolld6(){
 function roll(){
   const result = rolld6();
   if (result <= 2) {
-    updateLog("You enter your garden.")
+    updateLog("You enter your garden.", "italic")
     rollAction("garden");
   } else if (result <= 4) {
-    updateLog("You hear a knock at your door.")
+    updateLog("You hear a knock at your door.", "italic")
     rollAction("knock");
   } else {
     potatoesToRemoveOrcs +=1;
     document.getElementById("trade").textContent = "Trade " + potatoesToRemoveOrcs + " potatoes to remove 1 Orc"
-    updateLog("The world is growing darker. It now requires " + potatoesToRemoveOrcs + " potatoes to stave off orcs.")
+    updateLog("The world is growing darker.", "italic") 
+    updateLog("It now requires " + potatoesToRemoveOrcs + " potatoes to stave off orcs.");
   }
 
   initializeStatDisplay();  
@@ -218,13 +220,22 @@ function initializeStatDisplay(){
   if (checkForEndCondition()){
     document.getElementById('trade').removeEventListener("click", trade);
     document.getElementById('roll').removeEventListener("click", roll);
+    
+    const actions = document.getElementById("actions");
+    const restart = document.createElement("button");
+    restart.textContent = "New Game";
+    restart.addEventListener("click", (e)=>{location.reload()})
+    actions.appendChild(restart);
   };
 }
 
-function updateLog(text){
+function updateLog(text, className){
   const log = document.getElementById("log");
   const newLogEntry = document.createElement("div");
   newLogEntry.textContent = text;
+  if (className){
+    newLogEntry.classList.add(className);
+  }
   log.appendChild(newLogEntry);
   log.scrollTo(0, log.scrollHeight);
 }
@@ -235,18 +246,18 @@ initializeStatDisplay();
 function checkForEndCondition(){
 
   if (stats.potatoes >= 10){
-    updateLog("You have become a successful potato farmer.");
-    updateLog("THE END");
-    return true;
+      updateLog("You have become a successful potato farmer.");
+      updateLog("THE END");
+      return true;
   } else if (stats.destiny >=10) {
-    updateLog("You are recruited by a wizard for a magical adventure");
-    updateLog("THE END");
-    return true;
+      updateLog("You are recruited by a wizard for a magical adventure.");
+      updateLog("THE END");
+      return true;
   } else if (stats.orcs >= 10){
-    updateLog("You have been eaten by orcs. :(");
-    updateLog("THE END");
-    return true;
+      updateLog("You have been eaten by orcs. :(")
+      updateLog("THE END");
+      return true;
   } else {
-    return false;
+      return false;
   }
 }

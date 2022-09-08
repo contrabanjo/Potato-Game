@@ -10,6 +10,43 @@ html, body {
  overflow-y: hidden;
 }
 
+@media screen and (orientation:portrait){
+ body{
+  font-size: xx-large;
+  overflow-y: scroll;
+  width: 100%;
+ }
+ 
+ #main {
+   flex-direction: column;
+   margin: 0;
+ }
+
+ #stats .empty, #stats .filled{
+  height: 50px;
+  width: 50px;
+ }
+
+ #actions {
+  
+ }
+
+ #actions button {
+  font-size: xxx-large;
+  margin: 15px 0px;
+ }
+
+ #main #actions button:active{
+  margin-top: 15px;  
+ }
+
+ #main #log {
+  height: 35vh;
+  margin: 0;
+ }
+ 
+}
+
 h1, h4{
  margin-left: 10px; 
 }
@@ -65,6 +102,19 @@ h4{
  overflow-y: scroll;
 }
 
+#log :nth-last-child(2){
+ border-top: solid thin black;
+}
+
+#log :last-child{
+ font-weight: bold;
+}
+
+.italic{
+ font-style: italic;
+}
+
 #signature{
  text-align: right;
+ margin-right: 10px;
 }
