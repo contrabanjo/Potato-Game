@@ -5,5 +5,66 @@
 html, body {
  height: 100%;
  margin: 0;
+ 
+ font-family: system-ui;
+ overflow-y: hidden;
 }
 
+h1, h4{
+ margin-left: 10px; 
+}
+
+h4{
+}
+
+#main{
+ display: flex;
+ padding: 10px;
+}
+
+
+
+#stats h3{
+ width: 100%;
+ margin: 0;
+ border-bottom: thin solid black;
+}
+
+#stats div{
+ display: flex;
+}
+
+#stats div>div{
+ border: solid thin black;
+ height: 10px;
+ width: 10px;
+ margin: 1px;
+}
+
+#stats .filled{
+ background: black;
+}
+
+#actions{
+  margin-top: 5px; 
+}
+
+#actions button {
+  width: 100%;
+}
+
+#actions button:active{
+  margin-top: 2px;
+}
+
+#log {
+ border: solid thin black;
+ margin-left: 10px;
+ height: 70vh;
+ width: 100%;
+ overflow-y: scroll;
+}
+
+#signature{
+ text-align: right;
+}
